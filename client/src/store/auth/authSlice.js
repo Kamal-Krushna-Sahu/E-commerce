@@ -7,14 +7,25 @@ const initialState = {
   user: null,
 };
 
-export const registerUser = createAsyncThunk("/api/auth", async (formData) => {
-  const response = await axios.post(
-    "http://localhost:3000/api/v1/users/register-user",
-    formData,
-    { withCredentials: true }
-  );
-  return response.data;
-});
+export const registerUser = createAsyncThunk(
+  "/auth/register",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/v1/users/register-user",
+        formData,
+        { withCredentials: true }
+      );
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.data) {
+        // This ensures your backend message is passed
+        return rejectWithValue(error.response.data);
+      }
+      return rejectWithValue({ message: error.message });
+    }
+  }
+);
 
 const authSlice = createSlice({
   name: "auth",

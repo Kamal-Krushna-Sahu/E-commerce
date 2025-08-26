@@ -20,14 +20,23 @@ function AuthRegister() {
 
   function onSubmit(e) {
     e.preventDefault();
-    dispatch(registerUser(formData)).then((res) => {
-      if (res?.payload?.success) {
-        {
-          toast(res?.payload?.message);
+    dispatch(registerUser(formData))
+      .unwrap() // unwrap(): throws the payload when rejected, making the error easier to catch
+      .then((res) => {
+        // console.log(res);
+        if (res?.success) {
+          {
+            toast(res?.message);
+          }
+          navigate("/auth/login");
         }
-        navigate("/auth/login");
-      }
-    });
+      })
+      .catch((error) => {
+        {
+          toast(error?.message);
+        }
+        // console.log(error);
+      });
   }
 
   return (
