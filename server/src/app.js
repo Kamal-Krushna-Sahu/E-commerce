@@ -26,4 +26,9 @@ app.use(cookieParser());
 import userRouter from "./routes/user.routes.js";
 app.use("/api/v1/users", userRouter);
 
+// Configuration to return "JSON error" instead of returning "HTML error" so that we can get "error message" in frontend.
+// After all routes and other middleware:
+import { errorHandler } from "./utils/errorHandler.js";
+app.use(errorHandler);
+
 export { app };
