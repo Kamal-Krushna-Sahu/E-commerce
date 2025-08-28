@@ -83,4 +83,11 @@ const loginUser = asyncHandler(async (req, res) => {
     );
 });
 
-export { registerUser, loginUser };
+const checkAuth = asyncHandler(async (req, res) => {
+  const user = req.user;
+  res
+    .status(200)
+    .json(new ApiResponse(200, { user }, "User is Authenticated."));
+});
+
+export { registerUser, loginUser, checkAuth };
