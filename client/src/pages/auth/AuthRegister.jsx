@@ -21,9 +21,8 @@ function AuthRegister() {
   function onSubmit(e) {
     e.preventDefault();
     dispatch(registerUser(formData))
-      .unwrap() // unwrap(): throws the payload when rejected, making the error easier to catch
+      .unwrap() // .unwrap() makes createAsyncThunk act like a normal promise, giving you the raw result or throwing the error instead of a Redux action object.
       .then((res) => {
-        // console.log(res);
         if (res?.success) {
           {
             toast(res?.message);
@@ -35,7 +34,6 @@ function AuthRegister() {
         {
           toast(error?.message);
         }
-        // console.log(error);
       });
   }
 

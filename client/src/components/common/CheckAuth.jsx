@@ -2,7 +2,11 @@ import { Navigate, useLocation } from "react-router-dom";
 
 const CheckAuth = ({ isAuthenticated, user, children }) => {
   const location = useLocation();
-  // console.log(location.pathname, isAuthenticated)
+
+  // console.log(
+  //   `CheckAuth location.pathname : ${location.pathname},     isAuthenticated : ${isAuthenticated}`
+  // );
+  // console.log("======================");
 
   // check if authenticated, then redirect according to "role"
   if (location.pathname === "/") {
@@ -58,6 +62,47 @@ const CheckAuth = ({ isAuthenticated, user, children }) => {
   ) {
     return <Navigate to="/admin/dashboard" />;
   }
+
+  // // 1️ Handle root "/"
+  // if (location.pathname === "/") {
+  //   if (!isAuthenticated) return <Navigate to="/auth/login" />;
+  //   return user?.role === "admin" ? (
+  //     <Navigate to="/admin/dashboard" />
+  //   ) : (
+  //     <Navigate to="/shop" />
+  //   );
+  // }
+
+  // // 2️ If not logged in, redirect to login (except for /auth routes)
+  // if (!isAuthenticated && !location.pathname.startsWith("/auth")) {
+  //   return <Navigate to="/auth/login" state={{ from: location }} replace />;
+  // }
+
+  // // 3️ Prevent logged-in users from accessing /auth/login or /auth/register
+  // if (isAuthenticated && location.pathname.startsWith("/auth")) {
+  //   return user?.role === "admin" ? (
+  //     <Navigate to="/admin/dashboard" />
+  //   ) : (
+  //     <Navigate to="/shop" />
+  //   );
+  // }
+
+  // // 4️ Role-based restriction
+  // if (
+  //   isAuthenticated &&
+  //   user?.role !== "admin" &&
+  //   location.pathname.startsWith("/admin")
+  // ) {
+  //   return <Navigate to="/unauth-page" />;
+  // }
+
+  // if (
+  //   isAuthenticated &&
+  //   user?.role === "admin" &&
+  //   location.pathname.startsWith("/shop")
+  // ) {
+  //   return <Navigate to="/admin/dashboard" />;
+  // }
 
   return <>{children}</>;
 };
