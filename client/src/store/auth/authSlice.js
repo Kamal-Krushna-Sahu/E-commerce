@@ -28,12 +28,32 @@ export const registerUser = createAsyncThunk(
 );
 
 export const loginUser = createAsyncThunk(
-  "/auth",
+  "/auth/login",
   async (formData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
         "http://localhost:3000/api/v1/users/login-user",
         formData,
+        { withCredentials: true }
+      );
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.data) {
+        // This ensures your backend message is passed
+        return rejectWithValue(error.response.data);
+      }
+      return rejectWithValue({ message: error.message });
+    }
+  }
+);
+
+export const logoutUser = createAsyncThunk(
+  "/auth/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/v1/users/logout",
+        {},
         { withCredentials: true }
       );
       return response.data;
@@ -65,7 +85,7 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setUser: (state, action) => {},
+    setUser: () => {},
   },
   extraReducers: (builder) => {
     builder
@@ -104,6 +124,11 @@ const authSlice = createSlice({
         state.isAuthenticated = action.payload.success;
       })
       .addCase(checkAuth.rejected, (state) => {
+        state.isLoading = false;
+        state.user = null;
+        state.isAuthenticated = false;
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
         state.isLoading = false;
         state.user = null;
         state.isAuthenticated = false;
