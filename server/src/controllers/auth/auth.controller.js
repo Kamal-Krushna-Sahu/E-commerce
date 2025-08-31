@@ -83,6 +83,14 @@ const loginUser = asyncHandler(async (req, res) => {
     );
 });
 
+const logoutUser = asyncHandler(async (req, res) => {
+  res
+    .status(200)
+    .clearCookie("accessToken")
+    .clearCookie("refreshToken")
+    .json(new ApiResponse(200, {}, "Logged out Successfully."));
+});
+
 const checkAuth = asyncHandler(async (req, res) => {
   const user = req.user;
   res
@@ -90,4 +98,4 @@ const checkAuth = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { user }, "User is Authenticated."));
 });
 
-export { registerUser, loginUser, checkAuth };
+export { registerUser, loginUser, logoutUser, checkAuth };
