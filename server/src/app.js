@@ -23,8 +23,11 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
 
-import userRouter from "./routes/user.routes.js";
+import userRouter from "./routes/auth/user.routes.js";
+import adminProductsRouter from "./routes/admin/products.routes.js";
+
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/admin/products", adminProductsRouter);
 
 // Configuration to return "JSON error" instead of returning "HTML error" so that we can get "error message" in frontend.
 // After all routes and other middleware:

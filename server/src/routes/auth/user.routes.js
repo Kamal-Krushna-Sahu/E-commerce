@@ -4,8 +4,8 @@ import {
   registerUser,
   checkAuth,
   logoutUser,
-} from "../controllers/auth/auth.controller.js";
-import { verifyJwt } from "../middlewares/auth/auth.middleware.js";
+} from "../../controllers/auth/auth.controller.js";
+import { verifyJwt } from "../../middlewares/auth/auth.middleware.js";
 
 const router = express.Router();
 
