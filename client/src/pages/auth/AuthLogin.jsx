@@ -23,15 +23,11 @@ function AuthLogin() {
       .then((res) => {
         if (res?.success) {
           // navigate("/shop")
-          {
-            toast(res?.message);
-          }
+          toast(res?.message);
         }
       })
       .catch((error) => {
-        {
-          toast(error?.message);
-        }
+        toast(error?.message);
       });
   }
 

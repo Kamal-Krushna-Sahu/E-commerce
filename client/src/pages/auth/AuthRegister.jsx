@@ -24,16 +24,12 @@ function AuthRegister() {
       .unwrap() // .unwrap() makes createAsyncThunk act like a normal promise, giving you the raw result or throwing the error instead of a Redux action object.
       .then((res) => {
         if (res?.success) {
-          {
-            toast(res?.message);
-          }
+          toast(res?.message);
           navigate("/auth/login");
         }
       })
       .catch((error) => {
-        {
-          toast(error?.message);
-        }
+        toast(error?.message);
       });
   }
 
