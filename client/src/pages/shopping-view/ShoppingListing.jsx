@@ -1,8 +1,5 @@
-
 const ShoppingListing = () => {
-  return (
-    <div>ShoppingListing</div>
-  )
-}
+  return <div>ShoppingListing</div>;
+};
 
-export default ShoppingListing
+export default ShoppingListing;
