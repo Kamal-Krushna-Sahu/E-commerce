@@ -11,12 +11,15 @@ function ProductFilter() {
       </div>
       <div className="p-4 space-y-4">
         {Object.keys(filterOptions).map((keyItem) => (
-          <>
+          <div key={keyItem}>
             <div>
               <h3 className="text-base font-bold">{keyItem}</h3>
               <div className="grid gap-2 mt-2">
                 {filterOptions[keyItem].map((option) => (
-                  <Label className="flex items-center gap-2 font-medium">
+                  <Label
+                    className="flex items-center gap-2 font-medium"
+                    key={option.id}
+                  >
                     <Checkbox />
                     {option.label}
                   </Label>
@@ -24,7 +27,7 @@ function ProductFilter() {
               </div>
             </div>
             <Separator />
-          </>
+          </div>
         ))}
       </div>
     </div>
