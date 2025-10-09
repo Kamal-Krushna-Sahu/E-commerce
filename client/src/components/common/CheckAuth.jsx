@@ -8,7 +8,61 @@ const CheckAuth = ({ isAuthenticated, user, children }) => {
   // );
   // console.log("======================");
 
-  // check if authenticated, then redirect according to "role"
+  // // check if authenticated, then redirect according to "role"
+  // if (location.pathname === "/") {
+  //   if (!isAuthenticated) {
+  //     return <Navigate to="/auth/login" />;
+  //   } else {
+  //     if (user?.role === "admin") {
+  //       return <Navigate to="/admin/dashboard" />;
+  //     } else {
+  //       return <Navigate to="/shop/home" />;
+  //     }
+  //   }
+  // }
+
+  // // check if not authenticated and tries to access the "shop" or "admin" page
+  // if (
+  //   !isAuthenticated &&
+  //   !(
+  //     location.pathname.includes("/login") ||
+  //     location.pathname.includes("/register")
+  //   )
+  // ) {
+  //   return <Navigate to="/auth/login" />;
+  // }
+
+  // // if authenticated && tries to login or register, redirect according to "role"
+  // if (
+  //   isAuthenticated &&
+  //   (location.pathname.includes("/login") ||
+  //     location.pathname.includes("/register"))
+  // ) {
+  //   if (user?.role === "admin") {
+  //     return <Navigate to="/admin/dashboard" />;
+  //   } else {
+  //     return <Navigate to="/shop/home" />;
+  //   }
+  // }
+
+  // // if user tries to access admin page then, "unauthorized access"
+  // if (
+  //   isAuthenticated &&
+  //   user?.role !== "admin" &&
+  //   location.pathname.includes("admin")
+  // ) {
+  //   return <Navigate to="/unauth-page" />;
+  // }
+
+  // // if admin tries to view website then, redirect to "admin dashboard"
+  // if (
+  //   isAuthenticated &&
+  //   user?.role === "admin" &&
+  //   location.pathname.includes("shop")
+  // ) {
+  //   return <Navigate to="/admin/dashboard" />;
+  // }
+
   if (location.pathname === "/") {
     if (!isAuthenticated) {
       return <Navigate to="/auth/login" />;
@@ -21,7 +75,6 @@ const CheckAuth = ({ isAuthenticated, user, children }) => {
     }
   }
 
-  // check if not authenticated and tries to access the "shop" or "admin" page
   if (
     !isAuthenticated &&
     !(
@@ -32,7 +85,6 @@ const CheckAuth = ({ isAuthenticated, user, children }) => {
     return <Navigate to="/auth/login" />;
   }
 
-  // if authenticated && tries to login or register, redirect according to "role"
   if (
     isAuthenticated &&
     (location.pathname.includes("/login") ||
@@ -45,7 +97,6 @@ const CheckAuth = ({ isAuthenticated, user, children }) => {
     }
   }
 
-  // if user tries to access admin page then, "unauthorized access"
   if (
     isAuthenticated &&
     user?.role !== "admin" &&
@@ -54,7 +105,6 @@ const CheckAuth = ({ isAuthenticated, user, children }) => {
     return <Navigate to="/unauth-page" />;
   }
 
-  // if admin tries to view website then, redirect to "admin dashboard"
   if (
     isAuthenticated &&
     user?.role === "admin" &&
