@@ -13,12 +13,29 @@ import { fetchAllFilteredProducts } from "@/store/shop/products-slice/productsSl
 import { ArrowUpDownIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
+
+// createSearchParamsHelper(filters) → "color=red%2Cblue&size=medium"
+function createSearchParamsHelper(filterParams) {
+  const queryParams = [];
+
+  for (const [key, value] of Object.entries(filterParams)) {
+    if (Array.isArray(value) && value.length > 0) {
+      const paramValue = value.join(",");
+
+      queryParams.push(`${key}=${encodeURIComponent(paramValue)}`);
+    }
+  }
+
+  return queryParams.join("&");
+}
 
 const ShoppingListing = () => {
   const { productList } = useSelector((state) => state.shopProducts);
   const dispatch = useDispatch();
   const [filters, setFilters] = useState({});
   const [sort, setSort] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   function handleSort(currentValue) {
     setSort(currentValue);
@@ -56,11 +73,22 @@ const ShoppingListing = () => {
   }, []);
 
   useEffect(() => {
-    dispatch(fetchAllFilteredProducts());
-  }, [dispatch]);
+    if (filters && Object.keys(filters).length > 0) {
+      const createQueryString = createSearchParamsHelper(filters); // createSearchParamsHelper(filters) → "color=red%2Cblue&size=medium"
+      setSearchParams(new URLSearchParams(createQueryString)); // setSearchParams() updates URL ?color=red%2Cblue&size=medium
+    }
+  }, [filters, setSearchParams]);
+
+  useEffect(() => {
+    if (filters !== null && sort !== null) {
+      dispatch(
+        fetchAllFilteredProducts({ filterParams: filters, sortParams: sort })
+      );
+    }
+  }, [dispatch, filters, sort]);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-6 p-4 md:p-6">
+    <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 p-4 md:p-6">
       <ProductFilter filters={filters} handleFilter={handleFilter} />
 
       <div className="bg-background w-full rounded-lg shadow-sm">
