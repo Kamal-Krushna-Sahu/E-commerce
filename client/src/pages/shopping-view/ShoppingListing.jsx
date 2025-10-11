@@ -1,4 +1,5 @@
 import ProductFilter from "@/components/shopping-view/Filter.jsx";
+import ProductDetailsDialog from "@/components/shopping-view/ProductDetails";
 import ShoppingProductTile from "@/components/shopping-view/ProductTile.jsx";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,7 +10,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { sortOptions } from "@/config/config.js";
-import { fetchAllFilteredProducts } from "@/store/shop/products-slice/productsSlice.js";
+import {
+  fetchAllFilteredProducts,
+  fetchProductDetails,
+} from "@/store/shop/products-slice/productsSlice.js";
 import { ArrowUpDownIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,7 +26,6 @@ function createSearchParamsHelper(filterParams) {
   for (const [key, value] of Object.entries(filterParams)) {
     if (Array.isArray(value) && value.length > 0) {
       const paramValue = value.join(",");
-
       queryParams.push(`${key}=${encodeURIComponent(paramValue)}`);
     }
   }
@@ -31,15 +34,15 @@ function createSearchParamsHelper(filterParams) {
 }
 
 const ShoppingListing = () => {
-  const { productList } = useSelector((state) => state.shopProducts);
+  const { productList, productDetails } = useSelector(
+    (state) => state.shopProducts
+  );
   const dispatch = useDispatch();
-  const [filters, setFilters] = useState({});
-  const [sort, setSort] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  function handleSort(currentValue) {
-    setSort(currentValue);
-  }
+  const [filters, setFilters] = useState({});
+  const [sort, setSort] = useState(null);
+  const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
 
   function handleFilter(getSectionId, getCurrentOption) {
     let copyFilters = { ...filters };
@@ -67,17 +70,13 @@ const ShoppingListing = () => {
     sessionStorage.setItem("filters", JSON.stringify(copyFilters)); // to apply filters again on page reload
   }
 
-  useEffect(() => {
-    setSort("price-lowtohigh"); // default sort value on page reload
-    setFilters(JSON.parse(sessionStorage.getItem("filters")) || {}); // to apply filters again on page reload
-  }, []);
+  function handleSort(currentValue) {
+    setSort(currentValue);
+  }
 
-  useEffect(() => {
-    if (filters && Object.keys(filters).length > 0) {
-      const createQueryString = createSearchParamsHelper(filters); // createSearchParamsHelper(filters) → "color=red%2Cblue&size=medium"
-      setSearchParams(new URLSearchParams(createQueryString)); // setSearchParams() updates URL ?color=red%2Cblue&size=medium
-    }
-  }, [filters, setSearchParams]);
+  function handleGetProductDetails(getCurrentProductId) {
+    dispatch(fetchProductDetails(getCurrentProductId));
+  }
 
   useEffect(() => {
     if (filters !== null && sort !== null) {
@@ -87,16 +86,36 @@ const ShoppingListing = () => {
     }
   }, [dispatch, filters, sort]);
 
+  useEffect(() => {
+    if (filters && Object.keys(filters).length > 0) {
+      const createQueryString = createSearchParamsHelper(filters); // createSearchParamsHelper(filters) → "color=red%2Cblue&size=medium"
+      setSearchParams(new URLSearchParams(createQueryString)); // setSearchParams() updates URL ?color=red%2Cblue&size=medium
+    }
+  }, [filters, setSearchParams]);
+
+  useEffect(() => {
+    setSort("price-lowtohigh"); // default sort value on page reload
+    setFilters(JSON.parse(sessionStorage.getItem("filters")) || {}); // to apply filters again on page reload
+  }, []);
+
+  useEffect(() => {
+    if (productDetails !== null) {
+      setOpenDetailsDialog(true);
+    }
+  }, [productDetails]);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 p-4 md:p-6">
       <ProductFilter filters={filters} handleFilter={handleFilter} />
 
       <div className="bg-background w-full rounded-lg shadow-sm">
+        {/* all product tiles header */}
         <div className="p-4 boredr-b flex items-center justify-between">
           <h2 className="text-lg font-extrabold">All Products</h2>
+
           <div className="flex items-center gap-3">
             <span className="text-muted-foreground">
-              {productList.length} Products
+              {productList?.length} Products
             </span>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -125,17 +144,26 @@ const ShoppingListing = () => {
           </div>
         </div>
 
+        {/* all product tiles */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
           {productList && productList.length > 0
             ? productList.map((productItem) => (
                 <ShoppingProductTile
                   product={productItem}
                   key={productItem._id}
+                  handleGetProductDetails={handleGetProductDetails}
                 />
               ))
             : null}
         </div>
       </div>
+
+      {/* display product Dialog */}
+      <ProductDetailsDialog
+        open={openDetailsDialog}
+        setOpen={setOpenDetailsDialog}
+        productDetails={productDetails}
+      />
     </div>
   );
 };
