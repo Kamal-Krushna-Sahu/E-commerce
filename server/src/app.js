@@ -26,10 +26,12 @@ app.use(cookieParser());
 import userRouter from "./routes/auth/user.routes.js";
 import adminProductsRouter from "./routes/admin/products.routes.js";
 import shopProductsRouter from "./routes/shop/products.routes.js";
+import shopCartRouter from "./routes/shop/cart.routes.js";
 
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/admin/products", adminProductsRouter);
 app.use("/api/v1/shop/products", shopProductsRouter);
+app.use("/api/v1/shop/cart", shopCartRouter);
 
 // Configuration to return "JSON error" instead of returning "HTML error" so that we can get "error message" in frontend.
 // After all routes and other middleware:

@@ -21,10 +21,10 @@ const addToCart = async (res, res) => {
       });
     }
 
-    let cart = Cart.findOne({ userId });
+    let cart = await Cart.findOne({ userId });
 
     if (!cart) {
-      cart = await Cart.create({ userId, items: [] });
+      cart = new Cart({ userId, items: [] });
     }
 
     // Array.prototype.findIndex() returns the index of the first element in an array that satisfies a provided testing function. If no elements satisfy the condition, it returns -1.
@@ -64,7 +64,7 @@ const fetchCartItems = async (res, res) => {
     }
 
     const cart = await Cart.findOne({ userId }).populate({
-      path: "item.productId",
+      path: "items.productId",
       select: "image title price salePrice",
     });
 
@@ -150,10 +150,10 @@ const updateCartItemQty = async (res, res) => {
 
     const populateCartItems = cart.items.map((item) => ({
       productId: item.productId ? item.productId._id : null,
-      image: item.image ? item.productId.image : null,
-      title: item.title ? item.productId.title : "product not found",
-      price: item.price ? item.productId.price : null,
-      salePrice: item.salePrice ? item.productId.salePrice : null,
+      image: item.productId ? item.productId.image : null,
+      title: item.productId ? item.productId.title : "product not found",
+      price: item.productId ? item.productId.price : null,
+      salePrice: item.productId ? item.productId.salePrice : null,
       quantity: item.quantity,
     }));
 
@@ -174,6 +174,54 @@ const updateCartItemQty = async (res, res) => {
 
 const deleteCartItem = async (res, res) => {
   try {
+    const { userId, productId } = req.params;
+
+    if (!userId || !productId) {
+      return res.status(400).json({
+        success: false,
+        message: "Inavlid data provided !!",
+      });
+    }
+
+    const cart = await Cart.findOne({ userId }).populate({
+      path: "items.productId",
+      select: "image title price salePrice",
+    });
+
+    if (!cart) {
+      return res.status(404).json({
+        success: false,
+        message: "Cart not found !!",
+      });
+    }
+
+    cart.items = cart.items.filter(
+      (item) => item.productId._id.toString() !== productId
+    );
+
+    await cart.save();
+
+    await cart.populate({
+      path: "items.productId",
+      select: "image title price salePrice",
+    });
+
+    const populateCartItems = cart.items.map((item) => ({
+      productId: item.productId ? item.productId._id : null,
+      image: item.productId ? item.productId.image : null,
+      title: item.productId ? item.productId.title : "product not found",
+      price: item.productId ? item.productId.price : null,
+      salePrice: item.productId ? item.productId.salePrice : null,
+      quantity: item.quantity,
+    }));
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        ...cart._doc,
+        items: populateCartItems,
+      },
+    });
   } catch (error) {
     return res.status(500).json({
       success: false,
