@@ -1,7 +1,7 @@
 import { Cart } from "../../models/cart.model.js";
 import { Product } from "../../models/products.model.js";
 
-const addToCart = async (res, res) => {
+const addToCart = async (req, res) => {
   try {
     const { userId, productId, quantity } = req.body;
 
@@ -52,7 +52,7 @@ const addToCart = async (res, res) => {
   }
 };
 
-const fetchCartItems = async (res, res) => {
+const fetchCartItems = async (req, res) => {
   try {
     const { userId } = req.params;
 
@@ -109,7 +109,7 @@ const fetchCartItems = async (res, res) => {
   }
 };
 
-const updateCartItemQty = async (res, res) => {
+const updateCartItemQty = async (req, res) => {
   try {
     const { userId, productId, quantity } = req.body;
 
@@ -172,7 +172,7 @@ const updateCartItemQty = async (res, res) => {
   }
 };
 
-const deleteCartItem = async (res, res) => {
+const deleteCartItem = async (req, res) => {
   try {
     const { userId, productId } = req.params;
 
