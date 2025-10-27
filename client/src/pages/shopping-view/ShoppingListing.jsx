@@ -11,6 +11,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { sortOptions } from "@/config/config.js";
 import {
+  addToCart,
+  fetchCartItems,
+} from "@/store/shop/cart-slice/cartSlice.js";
+import {
   fetchAllFilteredProducts,
   fetchProductDetails,
 } from "@/store/shop/products-slice/productsSlice.js";
@@ -18,6 +22,7 @@ import { ArrowUpDownIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
 
 // createSearchParamsHelper(filters) → "color=red%2Cblue&size=medium"
 function createSearchParamsHelper(filterParams) {
@@ -37,6 +42,8 @@ const ShoppingListing = () => {
   const { productList, productDetails } = useSelector(
     (state) => state.shopProducts
   );
+  const { user } = useSelector((state) => state.auth);
+
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -76,6 +83,22 @@ const ShoppingListing = () => {
 
   function handleGetProductDetails(getCurrentProductId) {
     dispatch(fetchProductDetails(getCurrentProductId));
+  }
+
+  function handleAddToCart(getCurrentProductId) {
+    // console.log(getCurrentProductId);
+    dispatch(
+      addToCart({
+        userId: user?._id,
+        productId: getCurrentProductId,
+        quantity: 1,
+      })
+    ).then((data) => {
+      if (data?.payload?.success) {
+        dispatch(fetchCartItems(user?._id));
+        toast("Product is added to cart.");
+      }
+    });
   }
 
   useEffect(() => {
@@ -152,6 +175,7 @@ const ShoppingListing = () => {
                   product={productItem}
                   key={productItem._id}
                   handleGetProductDetails={handleGetProductDetails}
+                  handleAddToCart={handleAddToCart}
                 />
               ))
             : null}
