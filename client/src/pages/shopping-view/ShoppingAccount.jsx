@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import accImg from "../../assets/account.jpg";
-import Orders from "@/components/shopping-view/Orders";
 import Address from "@/components/shopping-view/Address";
+import ShoppingOrders from "@/components/shopping-view/Orders";
 
 const ShoppingAccount = () => {
   return (
@@ -23,7 +23,7 @@ const ShoppingAccount = () => {
             </TabsList>
 
             <TabsContent value="orders">
-              <Orders />
+              <ShoppingOrders />
             </TabsContent>
 
             <TabsContent value="address">
