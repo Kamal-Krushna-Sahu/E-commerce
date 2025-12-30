@@ -47,6 +47,8 @@ const ShoppingListing = () => {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
 
+  const categorySearchParam = searchParams.get("category");
+
   const [filters, setFilters] = useState({});
   const [sort, setSort] = useState(null);
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
@@ -114,12 +116,12 @@ const ShoppingListing = () => {
       const createQueryString = createSearchParamsHelper(filters); // createSearchParamsHelper(filters) → "color=red%2Cblue&size=medium"
       setSearchParams(new URLSearchParams(createQueryString)); // setSearchParams() updates URL ?color=red%2Cblue&size=medium
     }
-  }, [filters, setSearchParams]);
+  }, [filters]);
 
   useEffect(() => {
     setSort("price-lowtohigh"); // default sort value on page reload
     setFilters(JSON.parse(sessionStorage.getItem("filters")) || {}); // to apply filters again on page reload
-  }, []);
+  }, [categorySearchParam]);
 
   useEffect(() => {
     if (productDetails !== null) {
